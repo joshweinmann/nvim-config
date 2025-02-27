@@ -35,7 +35,7 @@ return {
           vim.keymap.set('n', 'gs', ':lua vim.lsp.buf.signature_help()<CR>')
 
           vim.keymap.set('n', '<leader>l', ':lua vim.lsp.buf.code_action()<CR>')
-          vim.keymap.set('n', '<leader>fm', function()
+          vim.keymap.set('n', '<leader>w', function()
             vim.lsp.buf.format { async = true }
           end)
         end,
