@@ -4,41 +4,33 @@ return {
     dependencies = {
       'williamboman/mason-lspconfig.nvim',
       'neovim/nvim-lspconfig',
-      'hrsh7th/nvim-cmp',
-      'hrsh7th/cmp-nvim-lsp',
-      'nvim-lua/plenary.nvim',
     },
     config = function()
-      require('mason').setup()
-      require('mason-lspconfig').setup()
+      require("mason").setup()
+      require("mason-lspconfig").setup({
+        ensure_installed = { "ts_ls" },
+        automatic_installation = true,
+      })
 
-      -- set up lspconfig
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      local lspconfig = require("lspconfig")
-      require('mason-lspconfig').setup_handlers {
-        function(server_name)
-          lspconfig[server_name].setup{
-            capabilities = capabilities,
-          }
-        end
-      }
+      -- LSP keybindings when LSP attaches to a buffer
+      local on_attach = function(client, bufnr)
+        local opts = { noremap = true, silent = true, buffer = bufnr }
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+        vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
+        vim.keymap.set('n', '<leader>.', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', '<leader>w', function()
+          vim.lsp.buf.format { async = true }
+        end, opts)
+      end
 
-      vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-        callback = function()
-          vim.keymap.set('n', 'K', ':lua vim.lsp.buf.hover()<CR>')
-          vim.keymap.set('n', 'gd', ':lua vim.lsp.buf.definition()<CR>')
-          vim.keymap.set('n', 'gD', ':lua vim.lsp.buf.declaration()<CR>')
-          vim.keymap.set('n', 'gi', ':lua vim.lsp.buf.implementation()<CR>')
-          vim.keymap.set('n', 'go', ':lua vim.lsp.buf.type_definition()<CR>')
-          vim.keymap.set('n', 'gr', ':lua vim.lsp.buf.references()<CR>')
-          vim.keymap.set('n', 'gs', ':lua vim.lsp.buf.signature_help()<CR>')
-
-          vim.keymap.set('n', '<leader>l', ':lua vim.lsp.buf.code_action()<CR>')
-          vim.keymap.set('n', '<leader>w', function()
-            vim.lsp.buf.format { async = true }
-          end)
-        end,
+      -- Setup TypeScript server
+      require('lspconfig').ts_ls.setup({
+        on_attach = on_attach,
       })
     end,
   }

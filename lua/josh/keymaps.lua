@@ -18,9 +18,5 @@ vim.keymap.set('n', '<leader>?', builtin.oldfiles)
 -- nvim-tree
 vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>')
 
--- formatting
-vim.keymap.set('n', '<leader>bi', ':silent !biome format --write %<CR>:edit!<CR>', { silent = true })
-
--- misc
-vim.keymap.set('n', '<leader>a', ':keepjumps normal! ggVG<CR>')    -- select all
-vim.keymap.set('n', '<leader>i', ':e ~/.config/nvim/init.lua<CR>') -- open init.lua
+-- select all
+vim.keymap.set('n', '<leader>a', ':keepjumps normal! ggVG<CR>')
