@@ -1,10 +1,3 @@
--- hide search highlight
-vim.keymap.set('n', '<leader>h', ':noh<CR>')
-
--- change buffers
-vim.keymap.set('n', 'gn', ':bn<CR>')
-vim.keymap.set('n', 'gp', ':bp<CR>')
-
 -- telescope
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>f', builtin.find_files)
@@ -18,5 +11,19 @@ vim.keymap.set('n', '<leader>?', builtin.oldfiles)
 -- nvim-tree
 vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>')
 
+-- change buffers
+vim.keymap.set('n', 'gn', ':bn<CR>')
+vim.keymap.set('n', 'gp', ':bp<CR>')
+
 -- select all
 vim.keymap.set('n', '<leader>a', ':keepjumps normal! ggVG<CR>')
+
+-- hide search highlight
+vim.keymap.set('n', '<leader>h', ':noh<CR>')
+
+-- vertical split
+vim.keymap.set('n', '<leader>v', ':vsplit<CR>')
+
+-- switch between split windows
+vim.keymap.set('n', 'gh', '<C-w>h')
+vim.keymap.set('n', 'gl', '<C-w>l')

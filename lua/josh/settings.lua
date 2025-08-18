@@ -59,3 +59,6 @@ vim.opt.undofile = true
 -- where to save undo file
 vim.opt.undodir = vim.fn.expand('~/.config/nvim/undo')
 
+-- show border around popup menu
+vim.opt.winborder = 'rounded'
+
