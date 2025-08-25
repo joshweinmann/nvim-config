@@ -5,10 +5,10 @@ return {
       'williamboman/mason-lspconfig.nvim',
       'neovim/nvim-lspconfig',
     },
+    event = { "BufReadPre", "BufNewFile" }, -- ensures proper load timing
     config = function()
       require("mason").setup()
-      
-      -- LSP keybindings when LSP attaches to a buffer
+
       local on_attach = function(client, bufnr)
         local opts = { noremap = true, silent = true, buffer = bufnr }
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
@@ -24,7 +24,8 @@ return {
         end, opts)
       end
 
-      -- Define custom configurations for specific servers
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
       local server_configs = {
         clangd = {
           cmd = {
@@ -49,29 +50,23 @@ return {
               '.git'
             )(fname) or require('lspconfig.util').path.dirname(fname)
           end,
+          on_attach = on_attach,
+          capabilities = capabilities,
         },
+        ts_ls = {
+          on_attach = on_attach,
+          capabilities = capabilities,
+        }
       }
 
       require("mason-lspconfig").setup({
-        ensure_installed = { "ts_ls", "clangd" },
+        ensure_installed = { "clangd", "ts_ls" },
         automatic_installation = true,
-        handlers = {
-          -- Default handler for servers without custom config
-          function(server_name)
-            local config = {
-              on_attach = on_attach,
-              capabilities = require('cmp_nvim_lsp').default_capabilities(),
-            }
-            
-            -- Merge custom config if it exists
-            if server_configs[server_name] then
-              config = vim.tbl_deep_extend("force", config, server_configs[server_name])
-            end
-            
-            require('lspconfig')[server_name].setup(config)
-          end,
-        }
       })
+
+      for server, config in pairs(server_configs) do
+        require('lspconfig')[server].setup(config)
+      end
     end,
   }
 }
