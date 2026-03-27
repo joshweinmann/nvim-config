@@ -5,12 +5,18 @@ return {
       'williamboman/mason-lspconfig.nvim',
       'neovim/nvim-lspconfig',
     },
+    event = { "BufReadPre", "BufNewFile" },
+
     config = function()
       require("mason").setup()
-      
-      -- LSP keybindings when LSP attaches to a buffer
-      local on_attach = function(client, bufnr)
+
+      local lspconfig = require("lspconfig")
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+      -- Shared on_attach for most servers
+      local function on_attach(client, bufnr)
         local opts = { noremap = true, silent = true, buffer = bufnr }
+
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
@@ -19,12 +25,9 @@ return {
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
         vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
         vim.keymap.set('n', '<leader>.', vim.lsp.buf.code_action, opts)
-        vim.keymap.set('n', '<leader>w', function()
-          vim.lsp.buf.format { async = true }
-        end, opts)
       end
 
-      -- Define custom configurations for specific servers
+      -- Configure LSP servers
       local server_configs = {
         clangd = {
           cmd = {
@@ -42,36 +45,58 @@ return {
             clangdFileStatus = true,
           },
           root_dir = function(fname)
-            return require('lspconfig.util').root_pattern(
-              'Makefile',
-              'configure.in',
-              'configure.ac',
-              '.git'
-            )(fname) or require('lspconfig.util').path.dirname(fname)
+            return lspconfig.util.root_pattern(
+              'Makefile', 'configure.in', 'configure.ac', '.git'
+            )(fname) or lspconfig.util.path.dirname(fname)
           end,
+          on_attach = on_attach,
+          capabilities = capabilities,
+        },
+
+        ts_ls = {
+          on_attach = function(client, bufnr)
+            -- Disable formatting from ts_ls to avoid conflicts with Biome
+            client.server_capabilities.documentFormattingProvider = false
+
+            -- Keymaps
+            on_attach(client, bufnr)
+
+            -- Format on save using Biome CLI
+            vim.api.nvim_create_autocmd("BufWritePre", {
+              buffer = bufnr,
+              callback = function()
+                local file = vim.fn.expand("%:p")
+                local buftext = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), "\n")
+
+                local biome_cmd = {
+                  "biome", "check", "--write", "--stdin-file-path", file
+                }
+
+                local output = vim.fn.systemlist(biome_cmd, buftext)
+                local exit_code = vim.v.shell_error
+
+                if exit_code == 0 then
+                  local cursor = vim.api.nvim_win_get_cursor(0)
+                  pcall(vim.cmd, "undojoin")
+                  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
+                  pcall(vim.api.nvim_win_set_cursor, 0, cursor)
+                end
+              end,
+            })
+          end,
+          capabilities = capabilities,
         },
       }
 
       require("mason-lspconfig").setup({
-        ensure_installed = { "ts_ls", "clangd", "zls" },
+        ensure_installed = vim.tbl_keys(server_configs),
         automatic_installation = true,
-        handlers = {
-          -- Default handler for servers without custom config
-          function(server_name)
-            local config = {
-              on_attach = on_attach,
-              capabilities = require('cmp_nvim_lsp').default_capabilities(),
-            }
-            
-            -- Merge custom config if it exists
-            if server_configs[server_name] then
-              config = vim.tbl_deep_extend("force", config, server_configs[server_name])
-            end
-            
-            require('lspconfig')[server_name].setup(config)
-          end,
-        }
       })
+
+      -- Setup each server
+      for server, config in pairs(server_configs) do
+        lspconfig[server].setup(config)
+      end
     end,
   }
 }
