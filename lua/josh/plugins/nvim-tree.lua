@@ -8,8 +8,8 @@ return {
           side = 'right',
           adaptive_size = true,
         },
-        -- filters = { dotfiles = false },
-        -- git = { ignore = false },
+        filters = { dotfiles = false },
+        git = { ignore = false },
       })
     end,
   }
