@@ -32,8 +32,8 @@ vim.opt.scrolloff = 4
 -- highlight current row
 vim.opt.cursorline = true
 
--- line at 80th column
-vim.opt.colorcolumn = '80'
+-- -- line at 80th column
+-- vim.opt.colorcolumn = '80'
 
 -- show sign column
 vim.opt.signcolumn = 'yes'

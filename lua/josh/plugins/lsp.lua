@@ -53,7 +53,7 @@ return {
       }
 
       require("mason-lspconfig").setup({
-        ensure_installed = { "ts_ls", "clangd" },
+        ensure_installed = { "ts_ls", "clangd", "zls" },
         automatic_installation = true,
         handlers = {
           -- Default handler for servers without custom config
