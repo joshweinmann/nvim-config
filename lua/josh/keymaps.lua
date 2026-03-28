@@ -9,6 +9,8 @@ vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find)
 vim.keymap.set('n', '<leader>?', builtin.oldfiles)
 vim.keymap.set('n', '<leader>m', builtin.lsp_document_symbols)
 vim.keymap.set('n', '<leader>r', builtin.lsp_references)
+vim.keymap.set('n', '<leader>t', builtin.git_status)
+vim.keymap.set('n', '<leader>k', builtin.keymaps)
 
 -- nvim-tree
 vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>')
