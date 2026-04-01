@@ -6,6 +6,8 @@ return {
         formatters = {
           biome = {
             command = '/opt/homebrew/bin/biome',
+            args = { "check", "--write", "--stdin-file-path", "$FILENAME" },
+            stdin = true,
           },
         },
         formatters_by_ft = {
@@ -19,7 +21,7 @@ return {
         },
         format_on_save = {
           timeout_ms = 500,
-          lsp_format = "fallback",
+          -- lsp_format = "fallback",
         }
       })
     end,

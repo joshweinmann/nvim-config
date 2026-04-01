@@ -31,3 +31,5 @@ vim.keymap.set('n', '<leader>v', ':vsplit<CR>')
 -- switch between split windows
 vim.keymap.set('n', 'gh', '<C-w>h')
 vim.keymap.set('n', 'gl', '<C-w>l')
+vim.keymap.set('n', 'gj', '<C-w>j')
+vim.keymap.set('n', 'gk', '<C-w>k')
