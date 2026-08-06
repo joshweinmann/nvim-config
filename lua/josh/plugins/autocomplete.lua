@@ -1,37 +1,24 @@
 return {
   {
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
-      'hrsh7th/cmp-cmdline',
-      'hrsh7th/cmp-nvim-lsp-signature-help',
+    'saghen/blink.cmp',
+    version = '1.*',
+    event = { 'InsertEnter', 'CmdlineEnter' },
+    opts = {
+      keymap = {
+        preset = 'default',
+        ['<C-Space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        ['<CR>'] = { 'accept', 'fallback' },
+        ['<Down>'] = { 'select_next', 'fallback' },
+        ['<Up>'] = { 'select_prev', 'fallback' },
+      },
+      completion = {
+        -- preselect the first entry so <CR> accepts it without arrowing down
+        list = { selection = { preselect = true, auto_insert = false } },
+        menu = { border = 'rounded' },
+        documentation = { auto_show = true, window = { border = 'rounded' } },
+      },
+      signature = { enabled = true, window = { border = 'rounded' } },
+      sources = { default = { 'lsp', 'path', 'buffer' } },
     },
-    config = function()
-      local cmp = require('cmp')
-      local select_opts = {behavior = cmp.SelectBehavior.Select}
-
-      cmp.setup({
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
-        mapping = cmp.mapping.preset.insert({
-          ['<C-Space>'] = cmp.mapping.complete(),                 -- open menu
-          ['<CR>'] = cmp.mapping.confirm({select = true}),        -- select option
-          ['<Down>'] = cmp.mapping.select_next_item(select_opts), -- next option
-          ['<Up>'] = cmp.mapping.select_prev_item(select_opts),   -- prev option
-        }),
-        sources = cmp.config.sources({
-          { name = 'nvim_lsp' },
-          { name = 'nvim_lsp_signature_help' }
-        },
-          {
-            { name = 'buffer' },
-          }
-        )
-      })
-    end
   }
 }

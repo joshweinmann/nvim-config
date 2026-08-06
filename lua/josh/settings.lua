@@ -17,7 +17,8 @@ vim.opt.shiftwidth = 2
 -- wrap cursor
 vim.opt.whichwrap:append('<>[]hl')
 
--- auto switch case-sensitive search
+-- auto switch case-sensitive search (smartcase only applies when ignorecase is on)
+vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- show line numbers
@@ -59,6 +60,20 @@ vim.opt.undofile = true
 -- where to save undo file
 vim.opt.undodir = vim.fn.expand('~/.config/nvim/undo')
 
+-- how long CursorHold waits (drives lsp document highlight)
+vim.opt.updatetime = 200
+
 -- show border around popup menu
 vim.opt.winborder = 'rounded'
 
+-- -- write directly to existing file
+-- vim.opt.backupcopy = 'yes'
+
+-- inline diagnostics; virtual_text is off by default
+vim.diagnostic.config({
+  virtual_text = { current_line = false, spacing = 2 },
+  severity_sort = true,
+  underline = true,
+  signs = true,
+  float = { border = 'rounded', source = true },
+})

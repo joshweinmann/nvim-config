@@ -6,10 +6,10 @@ return {
       require('nvim-tree').setup({
         view = {
           side = 'right',
-          adaptive_size = true,
+          -- a table width is adaptive mode: grows to fit the longest name
+          width = { min = 30 },
         },
-        filters = { dotfiles = false },
-        git = { ignore = false },
+        filters = { dotfiles = false, git_ignored = false },
       })
     end,
   }
